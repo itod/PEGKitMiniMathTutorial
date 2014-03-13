@@ -112,7 +112,7 @@ Unfortunately, our action code is a bit verbose, and it's making our grammar har
 
     atom = Number { 
         // pop a token off the stack and push it back as a float value 
-        PUSH_FLOAT(POP_FLOAT()); 
+        PUSH_DOUBLE(POP_DOUBLE()); 
     };
 
 This shortened action is exactly equivalent to the more verbose version above. The action still pops a number token off the stack, converts it to a float value, and pushes an `NSNumber` back onto the stack
@@ -131,21 +131,21 @@ This action executes immediately after the multiply operator (`*`) and right-han
 Again, we can use PEGKit's handy built-in macros to simplify our Objective-C action code. Here's the same action simplified:
 
     multExpr = primary ('*'! primary { 
-        PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
+        PUSH_DOUBLE(POP_DOUBLE() * POP_DOUBLE());
     })*;
 
 Finally, we'll need a similar action for our addition expression rule. Here's the complete grammar including actions:
 
 	expr = addExpr;
 	addExpr = multExpr ('+'! multExpr {
-	    PUSH_FLOAT(POP_FLOAT() + POP_FLOAT());
+	    PUSH_DOUBLE(POP_DOUBLE() + POP_DOUBLE());
 	})*;
 	multExpr = primary ('*'! primary { 
-	    PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
+	    PUSH_DOUBLE(POP_DOUBLE() * POP_DOUBLE());
 	})*;
 	primary = atom | '('! expr ')'!;
 	atom = Number { 
-	    PUSH_FLOAT(POP_FLOAT()); 
+	    PUSH_DOUBLE(POP_DOUBLE()); 
 	};
 
 ### Interlude: Checkout the Example Project (with PEGKit Dependency)
@@ -162,7 +162,7 @@ Open the **MiniMath** Xcode project, then select and run the **ParserGenApp** ta
 
 Paste the *MiniMath* grammar into the large text area at the bottom of the ParserGenApp window, and select the options shown below.
 
-![ParserGenApp](http://parsekit.com/github/peg/parsergen2.png)
+![ParserGenApp](http://parsekit.com/github/peg/parsergen.png)
 
 Click the **Generate** button and notice that [MiniMathParser.h](https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.h) and [MiniMathParser.m](https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.m) files have been created, and appear on your Desktop. Normally, you'd need to drag these source code files into your app's Xcode project, but in the case of *MiniMath*, I've included the files already (cooking show style!).
 
