@@ -1,6 +1,6 @@
 Hey there, it looks like you're trying to parse text input in Objective-C. You've come to the right place.
 
-**PEGKit is a parser generator implemented in Objective-C**. PEGKit converts [language grammars](http://en.wikipedia.org/wiki/Parsing_expression_grammar) into parsers intended for use in Cocoa applications running on iOS or Mac OS X.
+**[PEGKit](https://github.com/itod/pegkit) is a parser generator implemented in Objective-C**. PEGKit converts [language grammars](http://en.wikipedia.org/wiki/Parsing_expression_grammar) into parsers intended for use in Cocoa applications running on iOS or OS X.
 
 With PEGKit, you can define your language with a **high-level**, **easy-to-use**, **BNF-style grammar**, 
 and then **generate Objective-C source code** which implements a parser for your language.
