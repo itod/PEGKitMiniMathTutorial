@@ -31,11 +31,7 @@ First, let's define for our *"MiniMath"* language. *MiniMath* should allow expre
     (2+2)*3     // allow presence or absence of whitespace
     3.14 *5     // optional floating point numbers
 
-OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an expression language, we'll start with a `start` rule which is an "expression" or `epxr`.
-
-	start = expr;
-
-But how do we define `expr`?
+OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an expression language, we'll start with an `expr` rule. But how do we define `expr`?
 
     expr =  ???  // TODO
 
@@ -81,7 +77,6 @@ Finally, let's update our grammar to discard unnecessary tokens. The post-fix `!
 
 Here's the complete grammar:
 
-    start = expr;
     expr = addExpr;
     addExpr = multExpr ('+'! multExpr)*;
     multExpr = primary ('*'! primary)*;
@@ -141,7 +136,6 @@ Again, we can use PEGKit's handy built-in macros to simplify our Objective-C act
 
 Finally, we'll need a similar action for our addition expression rule. Here's the complete grammar including actions:
 
-	start = expr;
 	expr = addExpr;
 	addExpr = multExpr ('+'! multExpr {
 	    PUSH_FLOAT(POP_FLOAT() + POP_FLOAT());
