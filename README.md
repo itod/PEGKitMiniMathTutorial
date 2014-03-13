@@ -162,7 +162,7 @@ Open the **MiniMath** Xcode project, then select and run the **ParserGenApp** ta
 
 Paste the *MiniMath* grammar into the large text area at the bottom of the ParserGenApp window, and select the options shown below.
 
-![ParserGenApp](http://parsekit.com/github/peg/parsergen.png)
+![ParserGenApp](http://parsekit.com/github/peg/parsergen2.png)
 
 Click the **Generate** button and notice that [MiniMathParser.h](https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.h) and [MiniMathParser.m](https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.m) files have been created, and appear on your Desktop. Normally, you'd need to drag these source code files into your app's Xcode project, but in the case of *MiniMath*, I've included the files already (cooking show style!).
 
