@@ -31,7 +31,7 @@ First, let's define for our *"MiniMath"* language. *MiniMath* should allow expre
     (2+2)*3     // allow presence or absence of whitespace
     3.14 *5     // optional floating point numbers
 
-OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an expression language, we'll start with an `expr` rule. But how do we define `expr`?
+OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an *expression* language, we'll start with an `expr` rule. But how do we define `expr`?
 
     expr =  ???  // TODO
 
