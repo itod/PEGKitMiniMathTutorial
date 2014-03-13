@@ -31,11 +31,15 @@ First, let's define for our *"MiniMath"* language. *MiniMath* should allow expre
     (2+2)*3     // allow presence or absence of whitespace
     3.14 *5     // optional floating point numbers
 
-OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it. Since *MiniMath* is an expression language, let's define our initial `expr` rule:
+OK, now that we know what the expected *MiniMath* input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an expression language, we'll start with a `start` rule which is an "expression" or `epxr`.
+
+	start = expr;
+
+But how do we define `expr`?
 
     expr =  ???  // TODO
 
-But how do we define `expr`? **Rather** than designing our grammar from the top down, let's hold that thought, and work from the bottom up instead.
+**Rather** than designing our grammar from the top down, let's hold that thought, and work from the bottom up instead.
 
 Working from the bottom, we'll start with a rule called `atom`. And since *MiniMath* deals with numbers, we'll define `atom` as a `Number`.
 
@@ -43,7 +47,7 @@ Working from the bottom, we'll start with a rule called `atom`. And since *MiniM
 
 Notice how the rules we define ourselves (like `expr` and `atom`) start with lowercase letters. There are also built-in terminal rules like `Number`, `Word`, `QuotedString` and more which match common token types like numbers, words, and quoted strings. **The built-in rules always start with uppercase letters, while the rules we define ourselves must start with lowercase letters**.
 
-The built-in `Number` rule matches a series of digits as you would expect. By default, it also matches optional floating-point and exponential parts of a number (this behavior is easily configurable).
+The built-in `Number` rule matches a series of digits as you would expect. By default, it also matches optional floating-point and exponential parts of a number (this behavior is easily configurable, but in this case the default behavior is what we want).
 
 Now that we have defined an `atom` rule, let's define a primary expression.
 
@@ -51,7 +55,7 @@ Now that we have defined an `atom` rule, let's define a primary expression.
 
 A `primary` expression is either an atom or a parenthesized sub expression. The parentheses will be used to alter operator precedence in our *MiniMath* language.
 
-Note that we can recursively call our own `expr` rule (although in PEGKit grammars, you must always avoid [left recursion](http://en.wikipedia.org/wiki/Left_recursion)). 
+Note that we can recursively call our own `expr` rule (although in PEGKit grammars, you must always avoid [left recursion](http://en.wikipedia.org/wiki/Left_recursion), or rules which point immediately to themselves). 
 
 Now let's move on to multiplication and addition. As usual, we want multiplication to bind more tightly than addition. Since we're working from the bottom up, we can make multiplication bind more tightly by defining it first.
 
@@ -77,6 +81,7 @@ Finally, let's update our grammar to discard unnecessary tokens. The post-fix `!
 
 Here's the complete grammar:
 
+    start = expr;
     expr = addExpr;
     addExpr = multExpr ('+'! multExpr)*;
     multExpr = primary ('*'! primary)*;
@@ -136,17 +141,18 @@ Again, we can use PEGKit's handy built-in macros to simplify our Objective-C act
 
 Finally, we'll need a similar action for our addition expression rule. Here's the complete grammar including actions:
 
-    expr = addExpr;
-    addExpr = multExpr ('+'! multExpr {
-        PUSH_FLOAT(POP_FLOAT() + POP_FLOAT());
-    })*;
-    multExpr = primary ('*'! primary { 
-        PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
-    })*;
-    primary = atom | '('! expr ')'!;
-    atom = Number { 
-        PUSH_FLOAT(POP_FLOAT()); 
-    };
+	start = expr;
+	expr = addExpr;
+	addExpr = multExpr ('+'! multExpr {
+	    PUSH_FLOAT(POP_FLOAT() + POP_FLOAT());
+	})*;
+	multExpr = primary ('*'! primary { 
+	    PUSH_FLOAT(POP_FLOAT() * POP_FLOAT());
+	})*;
+	primary = atom | '('! expr ')'!;
+	atom = Number { 
+	    PUSH_FLOAT(POP_FLOAT()); 
+	};
 
 ### Interlude: Checkout the Example Project (with PEGKit Dependency)
 

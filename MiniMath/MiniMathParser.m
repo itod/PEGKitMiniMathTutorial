@@ -59,7 +59,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.startRuleName = @"expr";
+        self.startRuleName = @"start";
         self.tokenKindTab[@"*"] = @(MINIMATH_TOKEN_KIND_STAR);
         self.tokenKindTab[@"("] = @(MINIMATH_TOKEN_KIND_OPEN_PAREN);
         self.tokenKindTab[@"+"] = @(MINIMATH_TOKEN_KIND_PLUS);
@@ -75,13 +75,19 @@
 }
 
 - (void)start {
-    [self expr_];
+    [self start_];
+}
+
+- (void)start_ {
+    
+    [self expr_]; 
+    [self matchEOF:YES]; 
+
 }
 
 - (void)expr_ {
     
     [self addExpr_]; 
-    [self matchEOF:YES]; 
 
 }
 
