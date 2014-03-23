@@ -1,3 +1,0 @@
-[submodule "lib/pegKit"]
-	path = lib/pegKit
-	url = git@github.com:itod/pegkit.git
