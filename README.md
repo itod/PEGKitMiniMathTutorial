@@ -87,9 +87,12 @@ Here's the complete grammar:
 
 OK, so we designed a grammar for our *MiniMath* language that can be fed to PEGKit to produce Objective-C source code for our parser.
  
-But we don't just want to parse input, we also want to compute a result. The easiest way to do this is to use **grammar actions**. Grammar actions are small pieces of Objective-C source code embedded directly in a PEGKit grammar.
+But we don't just want to parse input, we also want to compute a result. This can be accomplished in one of two ways:
 
-We'll start by adding an action to the `atom` rule:
+1. Specify a **parser delegate** object when creating your parser. Your parser delegate will receive callbacks as the parser matches input.
+1. Add **grammar actions** to your grammar. Grammar actions are small pieces of Objective-C source code embedded directly in a PEGKit grammar.
+
+In this tutorial, we'll use the second option: grammar actions. We'll start by adding an action to the `atom` rule:
  
     atom = Number 
     {
