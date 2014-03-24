@@ -56,8 +56,8 @@
 
 @implementation MiniMathParser
 
-- (id)init {
-    self = [super init];
+- (id)initWithDelegate:(id)d {
+    self = [super initWithDelegate:d];
     if (self) {
         self.startRuleName = @"expr";
         self.tokenKindTab[@"*"] = @(MINIMATH_TOKEN_KIND_STAR);
