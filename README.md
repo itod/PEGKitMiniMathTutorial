@@ -96,7 +96,7 @@ We'll start by adding an action to the `atom` rule:
         PKToken *tok = [self.assembly pop]; // pop the Number token
         NSAssert(tok.isNumber, @"a number token just matched in `atom`");
         
-        NSNumber *n = @(tok.floatValue);
+        NSNumber *n = @(tok.doubleValue);
         [self.assembly push:n];  // push an NSNumber object
     };
     
@@ -122,7 +122,7 @@ Now let's add an action to perform multiplication in the `multExpr` rule:
     multExpr = primary ('*'! primary { 
         NSNumber *rhs = [self.assembly pop];
         NSNumber *lhs = [self.assembly pop];
-        NSNumber *n = @([lhs floatValue] * [rhs floatValue]);
+        NSNumber *n = @([lhs doubleValue] * [rhs doubleValue]);
         [self.assembly push:n];
     })*;
 
