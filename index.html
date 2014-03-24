@@ -144,7 +144,7 @@ atom = Number;
 <p>But we don't just want to parse input, we also want to compute a result. This can be accomplished in one of two ways:</p>
 
 <ol>
-<li>Specify a <strong>parser delegate</strong> object when creating your parser. Your parser delegate will receive callbacks as the parser matches input.</li>
+<li>Specify a <strong>parser delegate</strong> object when creating your parser. Your parser delegate will receive callbacks as the parser matches input (like <code>-parser:didMatchAtom:</code>).</li>
 <li>Add <strong>grammar actions</strong> to your grammar. Grammar actions are small pieces of Objective-C source code embedded directly in a PEGKit grammar.</li>
 </ol><p>In this tutorial, we'll use the second option: grammar actions. We'll start by adding an action to the <code>atom</code> rule:</p>
 
