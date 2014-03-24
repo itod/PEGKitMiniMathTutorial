@@ -1,0 +1,11 @@
+expr = mult ('+'! mult { PUSH_DOUBLE(POP_DOUBLE()+POP_DOUBLE()); })*;
+mult = pow ('*'! pow { PUSH_DOUBLE(POP_DOUBLE()*POP_DOUBLE()); })*;
+pow = atom ('^'! pow { 
+		double exp = POP_DOUBLE();
+		double base = POP_DOUBLE();
+		double result = base;
+	    for (NSUInteger i = 1; i < exp; i++) 
+			result *= base;
+		PUSH_DOUBLE(result); 
+	})?;
+atom = Number {PUSH_DOUBLE(POP_DOUBLE());};

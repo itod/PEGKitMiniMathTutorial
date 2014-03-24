@@ -1,0 +1,11 @@
+expr = addExpr;
+addExpr = multExpr ('+'! multExpr {
+    PUSH_DOUBLE(POP_DOUBLE() + POP_DOUBLE());
+})*;
+multExpr = primary ('*'! primary { 
+    PUSH_DOUBLE(POP_DOUBLE() * POP_DOUBLE());
+})*;
+primary = atom | '('! expr ')'!;
+atom = Number { 
+    PUSH_DOUBLE(POP_DOUBLE()); 
+};
