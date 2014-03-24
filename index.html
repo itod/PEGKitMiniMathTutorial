@@ -1,0 +1,320 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Build language parsers for iOS with PEGKit by itod</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Build language parsers for iOS with PEGKit</h1>
+        <p>An example of how to use PEGKit on iOS to parse a mini math language and compute a numerical result.</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/itod/PEGKitMiniMathTutorial" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/itod/PEGKitMiniMathTutorial/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/itod/PEGKitMiniMathTutorial/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <p>Hey there, it looks like you're trying to parse text input in Objective-C. You've come to the right place.</p>
+
+<p><strong><a href="https://github.com/itod/pegkit">PEGKit</a> is a parser generator implemented in Objective-C</strong>. PEGKit converts <a href="http://en.wikipedia.org/wiki/Parsing_expression_grammar">language grammars</a> into parsers intended for use in Cocoa applications running on iOS or OS X.</p>
+
+<p>With PEGKit, you can define your language with a <strong>high-level</strong>, <strong>easy-to-use</strong>, <strong>BNF-style grammar</strong>, 
+and then <strong>generate Objective-C source code</strong> which implements a parser for your language.</p>
+
+<p>Specifically, parsers produced by PEGKit are:</p>
+
+<ul>
+<li><strong>Recursive descent</strong></li>
+<li><strong>Deterministic</strong></li>
+<li>
+<strong><a href="http://bford.info/packrat/" title="Packrat Parsing and
+Parsing Expression Grammars">Packrat</a></strong> (or <em>memoizing</em>), </li>
+<li>
+<strong>Backtracking</strong> (Infinite-lookahead)</li>
+<li><strong><a href="http://www.antlr.org/wiki/display/ANTLR4/Semantic+Predicates" title="Semantic Predicates - ANTLR 4 - ANTLR Project">Predicated</a></strong></li>
+<li>Written in <strong>modern Objective-C</strong> (using blocks, ARC, properties)</li>
+</ul><p>That's a mouthful, but what it means in practice is that PEGKit offers you a great deal of flexibility and expressive power when designing your grammars, but also produces parsers which exhibit good (linear) performance characteristics at runtime. Also, the Objective-C code produced by PEGKit is clean and readable, and easy to debug or tweak by hand.</p>
+
+<p>The design of PEGKit has been heavily influenced by <a href="http://antlr.org">ANTLR</a> by Terence Parr and a <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622">book by Stephen J Metsker</a>. Also, PEGKit depends on <a href="http://mattgemmell.com/2008/05/20/mgtemplateengine-templates-with-cocoa" title="MGTemplateEngine - Templates with Cocoa - Matt Gemmell">MGTemplateEngine</a> by Matt Gemmell for its templating features.</p>
+
+<p>In this tutorial, I'll demonstrate how to use PEGKit to implement a small <em>"MiniMath"</em> expression language in an iOS application. When we're done, we'll be able to parse <em>MiniMath</em> expressions and compute and display the numerical results.</p>
+
+<h3>
+<a name="designing-the-grammar" class="anchor" href="#designing-the-grammar"><span class="octicon octicon-link"></span></a>Designing the Grammar</h3>
+
+<p>First, let's define for our <em>"MiniMath"</em> language. <em>MiniMath</em> should allow expressions like:</p>
+
+<pre><code>1           // bare numbers
+2 + 2 + 42  // addition (including repetition)
+2 * (2 + 4) // multiplication and sub-expressions
+(2+2)*3     // allow presence or absence of whitespace
+3.14 *5     // optional floating point numbers
+</code></pre>
+
+<p>OK, now that we know what the expected <em>MiniMath</em> input looks like, let's design a PEGKit grammar to match it.  Since MiniMath is an <em>expression</em> language, we'll start with an <code>expr</code> rule. But how do we define <code>expr</code>?</p>
+
+<pre><code>expr =  ???  // TODO
+</code></pre>
+
+<p><strong>Rather</strong> than designing our grammar from the top down, let's hold that thought, and work from the bottom up instead.</p>
+
+<p>Working from the bottom, we'll start with a rule called <code>atom</code>. And since <em>MiniMath</em> deals with numbers, we'll define <code>atom</code> as a <code>Number</code>.</p>
+
+<pre><code>atom = Number;
+</code></pre>
+
+<p>Notice how the rules we define ourselves (like <code>expr</code> and <code>atom</code>) start with lowercase letters. There are also built-in terminal rules like <code>Number</code>, <code>Word</code>, <code>QuotedString</code> and more which match common token types like numbers, words, and quoted strings. <strong>The built-in rules always start with uppercase letters, while the rules we define ourselves must start with lowercase letters</strong>.</p>
+
+<p>The built-in <code>Number</code> rule matches a series of digits as you would expect. By default, it also matches optional floating-point and exponential parts of a number (this behavior is easily configurable, but in this case the default behavior is what we want).</p>
+
+<p>Now that we have defined an <code>atom</code> rule, let's define a primary expression.</p>
+
+<pre><code>primary = atom | '(' expr ')';
+</code></pre>
+
+<p>A <code>primary</code> expression is either an atom or a parenthesized sub expression. The parentheses will be used to alter operator precedence in our <em>MiniMath</em> language.</p>
+
+<p>Note that we can recursively call our own <code>expr</code> rule (although in PEGKit grammars, you must always avoid <a href="http://en.wikipedia.org/wiki/Left_recursion">left recursion</a>, or rules which point immediately to themselves). </p>
+
+<p>Now let's move on to multiplication and addition. As usual, we want multiplication to bind more tightly than addition. Since we're working from the bottom up, we can make multiplication bind more tightly by defining it first.</p>
+
+<p>Let's define multiplication as a primary expression times a primary expression.</p>
+
+<pre><code>multExpr = primary '*' primary;
+</code></pre>
+
+<p>But we want to allow repetition in our multiplication expressions, like <code>2 * 8 * 0</code>, so we'll alter our <code>multExpr</code> rule slightly by wrapping the operator and the right-hand side operand in an optional repetition using <code>*</code>.</p>
+
+<pre><code>multExpr = primary ('*' primary)*;
+</code></pre>
+
+<p>Our addition rule will look very similar:</p>
+
+<pre><code>addExpr = multExpr ('+' multExpr)*;
+</code></pre>
+
+<p>Since our addition rule is defined in terms of multiplication operands, this will force multiplication to bind more tightly than addition. </p>
+
+<p>Now we can define our <code>expr</code> rule as an addition expression:</p>
+
+<pre><code>expr = addExpr;
+</code></pre>
+
+<p>Finally, let's update our grammar to discard unnecessary tokens. The post-fix <code>!</code> operator can be used to discard a token which is not needed to compute a result. In the case of <em>MiniMath</em>, we'll want to discard any token that is not a number (all of the literal strings in our grammar).</p>
+
+<p>Here's the complete grammar:</p>
+
+<pre><code>expr = addExpr;
+addExpr = multExpr ('+'! multExpr)*;
+multExpr = primary ('*'! primary)*;
+primary = atom | '('! expr ')'!;
+atom = Number;
+</code></pre>
+
+<h3>
+<a name="adding-actions-to-the-grammar" class="anchor" href="#adding-actions-to-the-grammar"><span class="octicon octicon-link"></span></a>Adding Actions to the Grammar</h3>
+
+<p>OK, so we designed a grammar for our <em>MiniMath</em> language that can be fed to PEGKit to produce Objective-C source code for our parser.</p>
+
+<p>But we don't just want to parse input, we also want to compute a result. The easiest way to do this is to use <strong>grammar actions</strong>. Grammar actions are small pieces of Objective-C source code embedded directly in a PEGKit grammar.</p>
+
+<p>We'll start by adding an action to the <code>atom</code> rule:</p>
+
+<pre><code>atom = Number 
+{
+    PKToken *tok = [self.assembly pop]; // pop the Number token
+    NSAssert(tok.isNumber, @"a number token just matched in `atom`");
+
+    NSNumber *n = @(tok.floatValue);
+    [self.assembly push:n];  // push an NSNumber object
+};
+</code></pre>
+
+<p>As you can see, actions are blocks of Objective-C code enclosed in curly braces and placed after any rule reference. </p>
+
+<p>In any action, there is a <code>self.assembly</code> object available (of type <code>PKAssembly</code>) which serves as a <strong>stack</strong> (via the <code>-push:</code> and <code>-pop</code> instance methods). The assembly's stack contains the most recently parsed tokens (instances of <code>PKToken</code>), and also serves as a place to store your work as you compute the result.</p>
+
+<p>Actions are executed immediately after their preceeding rule matches. So tokens which have recently been matched are available at the top of the assembly's stack.</p>
+
+<p>In this case, we are popping a just-matched number token off the stack, converting it to a float value, and pushing an <code>NSNumber</code> back onto the stack for later use.</p>
+
+<p>Unfortunately, our action code is a bit verbose, and it's making our grammar harder to read and understand. No problem: PEGKit includes some handy macros that can make this code more concise. Here's the <code>atom</code> rule and action rewritten using those macros:</p>
+
+<pre><code>atom = Number { 
+    // pop a token off the stack and push it back as a float value 
+    PUSH_DOUBLE(POP_DOUBLE()); 
+};
+</code></pre>
+
+<p>This shortened action is exactly equivalent to the more verbose version above. The action still pops a number token off the stack, converts it to a float value, and pushes an <code>NSNumber</code> back onto the stack</p>
+
+<p>Now let's add an action to perform multiplication in the <code>multExpr</code> rule:</p>
+
+<pre><code>multExpr = primary ('*'! primary { 
+    NSNumber *rhs = [self.assembly pop];
+    NSNumber *lhs = [self.assembly pop];
+    NSNumber *n = @([lhs floatValue] * [rhs floatValue]);
+    [self.assembly push:n];
+})*;
+</code></pre>
+
+<p>This action executes immediately after the multiply operator (<code>*</code>) and right-hand side <code>primary</code> operand have been matched. Since the <code>*</code> operator has been discarded,  we can be assured that the top two objects on the stack are NSNumbers placed by our <code>atom</code> rule action.  </p>
+
+<p>Again, we can use PEGKit's handy built-in macros to simplify our Objective-C action code. Here's the same action simplified:</p>
+
+<pre><code>multExpr = primary ('*'! primary { 
+    PUSH_DOUBLE(POP_DOUBLE() * POP_DOUBLE());
+})*;
+</code></pre>
+
+<p>Finally, we'll need a similar action for our addition expression rule. Here's the complete grammar including actions:</p>
+
+<pre><code>expr = addExpr;
+addExpr = multExpr ('+'! multExpr {
+    PUSH_DOUBLE(POP_DOUBLE() + POP_DOUBLE());
+})*;
+multExpr = primary ('*'! primary { 
+    PUSH_DOUBLE(POP_DOUBLE() * POP_DOUBLE());
+})*;
+primary = atom | '('! expr ')'!;
+atom = Number { 
+    PUSH_DOUBLE(POP_DOUBLE()); 
+};
+</code></pre>
+
+<h3>
+<a name="interlude-checkout-the-example-project-with-pegkit-dependency" class="anchor" href="#interlude-checkout-the-example-project-with-pegkit-dependency"><span class="octicon octicon-link"></span></a>Interlude: Checkout the Example Project (with PEGKit Dependency)</h3>
+
+<p>OK, time to <a href="https://github.com/itod/PEGKitMiniMathExample/zipball/master">checkout the PEGKit MiniMath Example</a> project. This project includes <a href="https://github.com/itod/pegkit">PEGKit</a> as submodule, and an iOS app target which embeds and links to PEGKit. If you are creating your own app which uses PEGKit, follow these <a href="http://stackoverflow.com/questions/9649537/how-to-embed-pegkit-as-a-private-framework-in-a-mac-app-bundle" title="objective c - How to embed PEGKit as a private framework in a Mac App bundle - Stack Overflow">instructions for embedding PEGKit in your app target</a>.</p>
+
+<h3>
+<a name="generating-parser-source-code" class="anchor" href="#generating-parser-source-code"><span class="octicon octicon-link"></span></a>Generating Parser Source Code</h3>
+
+<p>Now that our <em>MiniMath</em> grammar is complete, we can use PEGKit to generate Objective-C source code for our parser.</p>
+
+<p>Open the <strong>MiniMath</strong> Xcode project, then select and run the <strong>ParserGenApp</strong> target.</p>
+
+<p><strong>ParserGenApp</strong> is actually a target in the embedded PEGKit sub-project, and is the way you convert your PEGKit grammars into Objective-C source code.</p>
+
+<p>Paste the <em>MiniMath</em> grammar into the large text area at the bottom of the ParserGenApp window, and select the options shown below.</p>
+
+<p><img src="http://parsekit.com/github/peg/parsergen3.png" alt="ParserGenApp"></p>
+
+<p>Click the <strong>Generate</strong> button and notice that <a href="https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.h">MiniMathParser.h</a> and <a href="https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.m">MiniMathParser.m</a> files have been created, and appear on your Desktop. Normally, you'd need to drag these source code files into your app's Xcode project, but in the case of <em>MiniMath</em>, I've included the files already (cooking show style!).</p>
+
+<p><img src="http://parsekit.com/github/peg/files.png" alt="Produced Files"></p>
+
+<h3>
+<a name="run-the-minimath-example-ios-app" class="anchor" href="#run-the-minimath-example-ios-app"><span class="octicon octicon-link"></span></a>Run the MiniMath Example iOS App</h3>
+
+<p>Back in Xcode, switch to the <strong>MiniMath</strong> target. This target is an example iOS app with an <strong>Input</strong> textfield, <strong>Calc</strong> button, and a <strong>Result</strong> textfield:</p>
+
+<p><img src="http://parsekit.com/github/peg/app_empty.png" alt="MiniMathApp"></p>
+
+<p>Here's the implementation of the <code>-calc:</code> Action attached to the <strong>Calc</strong> button, showing how to use the <code>MiniMathParser</code> we just created:</p>
+
+<pre><code>- (IBAction)calc:(id)sender {
+    NSString *input = _inputField.text;
+
+    MiniMathParser *parser = [[MiniMathParser alloc] init];
+
+    NSError *err = nil;
+    PKAssembly *result = [parser parseString:input error:&amp;err];
+
+    if (!result) {
+        if (err) NSLog(@"%@", err);
+        _outputField.text = @"";
+        return;
+    }
+
+    // print the entire assembly in the result output field
+    _outputField.text = [result description];
+}
+</code></pre>
+
+<p>Run the app (make sure you've selected the <strong>iPhone Simulator</strong> as your run destination), and you'll see the input field is pre-populated with an example expression. Click the <strong>Calc</strong> button to compute and display the result:</p>
+
+<p><img src="http://parsekit.com/github/peg/app.png" alt="MiniMathApp"></p>
+
+<p>This displayed result deserves a bit of explanation. </p>
+
+<p>The result of the <code>-[MiniMathParser parseString:error:]</code> method is an assembly object of type <code>PKAssembly</code> described earlier. Again, an <strong>assembly</strong> is intended to be a convenient place to examine recently-matched tokens as well as store temporary work as the parse executes.</p>
+
+<p>A <code>PKAssembly</code> object combines a <strong>stack</strong> (which we've used earlier in this tutorial) and a buffer of the tokens matched in the input string so far. Printing an assembly via the <code>-[PKAssembly description]</code> method returns a string with the following format:</p>
+
+<p><strong>[</strong> <code>stack</code>, <code>contents</code>, <code>here</code> <strong>]</strong> <code>matched</code> <strong>/</strong> <code>tokens</code> <strong>/</strong> <code>here</code> <strong>^</strong></p>
+
+<p>The contents of the assembly's stack are on the left between the <code>[</code> <code>]</code> square brackets. And the buffered tokenized input is displayed on the right between <code>/</code> slash chars. Each slash separates individual tokens. The <code>^</code> caret represents the parser's current cursor position in the input token stream.</p>
+
+<p>So for our result:</p>
+
+<pre><code>[12](/2/+/2/)/*/3^
+</code></pre>
+
+<p><code>12</code> is on the stack. And tokens <code>(</code>, <code>2</code>, <code>+</code>, <code>2</code>, <code>)</code>, <code>*</code>, and <code>3</code> have been matched. The cursor (<code>^</code>) is positioned at the end of the input string (our parse successfully matched the entire string).</p>
+
+<p>This assembly display can often be useful when debugging parsers. But for now, all we want is the numerical result of parsing our <em>MiniMath</em> expression. As you can see, the result (<code>12</code>), is on the top of the stack. So we can just pop the numerical result off the stack and use it:</p>
+
+<pre><code>PKAssembly *result = [parser parseString:input nil error:nil];
+NSNumber *n = [result pop];
+NSLog(@"The numerical result is: %@", n);
+</code></pre>
+
+<p>For our given input of <code>(2+2)*3</code>:</p>
+
+<pre><code>The numerical result is: 12 
+</code></pre>
+
+<h3>
+<a name="conclusion" class="anchor" href="#conclusion"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+
+<p>I hope this simple tutorial will inspire you use PEGKit to parse more interesting langauges than <em>MiniMath</em> in your Mac and iOS applications.</p>
+
+<p>To learn more about PEGKit grammar syntax, checkout some of the <a href="https://github.com/itod/pegkit/blob/master/res/expression.grammar">many</a> <a href="https://github.com/itod/pegkit/blob/master/res/expressionActions.grammar">example</a> <a href="https://github.com/itod/pegkit/blob/master/res/nspredicate2.grammar">grammars</a> in the PEGKit project.</p>
+
+<p>The <a href="http://github.com/itod/pegkit/">main PEGKit repository is here</a>. I'm <a href="https://twitter.com/iTod" title="Todd Ditchendorf (iTod) on Twitter">@iTod</a> on Twitter, and if you find some use for PEGKit, consider checking out <a href="http://celestialteapot.com">some of my other software</a>. Cheers!</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/itod">itod</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-600478-16");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
