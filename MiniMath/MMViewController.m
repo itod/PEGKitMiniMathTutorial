@@ -19,7 +19,7 @@
 - (IBAction)calc:(id)sender {
     NSString *input = _inputField.text;
     
-    MiniMathParser *parser = [[MiniMathParser alloc] initWithDelegate:self];
+    MiniMathParser *parser = [[MiniMathParser alloc] init];
     
     NSError *err = nil;
     PKAssembly *result = [parser parseString:input error:&err];
