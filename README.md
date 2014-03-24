@@ -109,16 +109,16 @@ In any action, there is a `self.assembly` object available (of type `PKAssembly`
 
 Actions are executed immediately after their preceeding rule matches. So tokens which have recently been matched are available at the top of the assembly's stack.
 
-In this case, we are popping a just-matched number token off the stack, converting it to a float value, and pushing an `NSNumber` back onto the stack for later use.
+In this case, we are popping a just-matched number token off the stack, converting it to a double value, and pushing an `NSNumber` back onto the stack for later use.
 
 Unfortunately, our action code is a bit verbose, and it's making our grammar harder to read and understand. No problem: PEGKit includes some handy macros that can make this code more concise. Here's the `atom` rule and action rewritten using those macros:
 
     atom = Number { 
-        // pop a token off the stack and push it back as a float value 
+        // pop a token off the stack and push it back as a double value 
         PUSH_DOUBLE(POP_DOUBLE()); 
     };
 
-This shortened action is exactly equivalent to the more verbose version above. The action still pops a number token off the stack, converts it to a float value, and pushes an `NSNumber` back onto the stack
+This shortened action is exactly equivalent to the more verbose version above. The action still pops a number token off the stack, converts it to a double value, and pushes an `NSNumber` back onto the stack
 
 Now let's add an action to perform multiplication in the `multExpr` rule:
 
