@@ -176,24 +176,23 @@ Back in Xcode, switch to the **MiniMath** target. This target is an example iOS 
 
 Here's the implementation of the `-calc:` Action attached to the **Calc** button, showing how to use the `MiniMathParser` we just created:
 
-    - (IBAction)calc:(id)sender {
-        NSString *input = _inputField.text;
+	- (IBAction)calc:(id)sender {
+	    NSString *input = _inputField.text;
     
-        MiniMathParser *parser = [[MiniMathParser alloc] init];
+	    MiniMathParser *parser = [[MiniMathParser alloc] initWithDelegate:self];
     
-        NSError *err = nil;
-        PKAssembly *result = [parser parseString:input 
-                                       assembler:nil 
-                                           error:&err];
+	    NSError *err = nil;
+	    PKAssembly *result = [parser parseString:input error:&err];
 
-        if (!result) {
-            if (err) NSLog(@"%@", err);
-            return;
-        }
-    
-        // print the entire assembly in the result output field
-        _outputField.text = [result description];
-    }
+	    if (!result) {
+	        if (err) NSLog(@"%@", err);
+	        _outputField.text = @"";
+	        return;
+	    }
+
+	    // print the entire assembly in the result output field
+	    _outputField.text = [result description];
+	}
 
 Run the app (make sure you've selected the **iPhone Simulator** as your run destination), and you'll see the input field is pre-populated with an example expression. Click the **Calc** button to compute and display the result:
 
@@ -201,7 +200,7 @@ Run the app (make sure you've selected the **iPhone Simulator** as your run dest
 
 This displayed result deserves a bit of explanation. 
 
-The result of the `-[MiniMathParser parseString:assembler:error:]` method is an assembly object of type `PKAssembly` described earlier. Again, an **assembly** is intended to be a convenient place to examine recently-matched tokens as well as store temporary work as the parse executes.
+The result of the `-[MiniMathParser parseString:error:]` method is an assembly object of type `PKAssembly` described earlier. Again, an **assembly** is intended to be a convenient place to examine recently-matched tokens as well as store temporary work as the parse executes.
 
 A `PKAssembly` object combines a **stack** (which we've used earlier in this tutorial) and a buffer of the tokens matched in the input string so far. Printing an assembly via the `-[PKAssembly description]` method returns a string with the following format:
 
@@ -217,7 +216,7 @@ So for our result:
 
 This assembly display can often be useful when debugging parsers. But for now, all we want is the numerical result of parsing our *MiniMath* expression. As you can see, the result (`12`), is on the top of the stack. So we can just pop the numerical result off the stack and use it:
 
-    PKAssembly *result = [parser parseString:input assembler:nil error:nil];
+    PKAssembly *result = [parser parseString:input nil error:nil];
     NSNumber *n = [result pop];
     NSLog(@"The numerical result is: %@", n);
 
