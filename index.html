@@ -1,45 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Build language parsers for iOS with PEGKit by itod</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Build language parsers for iOS with PEGKit</h1>
+      <h2 class="project-tagline">An example of how to use PEGKit on iOS to parse a mini math language and compute a numerical result.</h2>
+      <a href="https://github.com/itod/PEGKitMiniMathTutorial" class="btn">View on GitHub</a>
+      <a href="https://github.com/itod/PEGKitMiniMathTutorial/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/itod/PEGKitMiniMathTutorial/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-      <header>
-        <h1>Build language parsers for iOS with PEGKit</h1>
-        <p>An example of how to use PEGKit on iOS to parse a mini math language and compute a numerical result.</p>
-      </header>
-
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/itod/PEGKitMiniMathTutorial" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/itod/PEGKitMiniMathTutorial/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/itod/PEGKitMiniMathTutorial/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <p>Hey there, it looks like you're trying to parse text input in Objective-C. You've come to the right place.</p>
+    <section class="main-content">
+      <p>Hey there, it looks like you're trying to parse text input in Objective-C. You've come to the right place.</p>
 
 <p><strong><a href="https://github.com/itod/pegkit">PEGKit</a> is a parser generator implemented in Objective-C</strong>. PEGKit converts <a href="http://en.wikipedia.org/wiki/Parsing_expression_grammar">language grammars</a> into parsers intended for use in Cocoa applications running on iOS or OS X.</p>
 
@@ -58,14 +38,16 @@ Parsing Expression Grammars">Packrat</a></strong> (or <em>memoizing</em>), </li>
 <strong>Backtracking</strong> (Infinite-lookahead)</li>
 <li><strong><a href="http://www.antlr.org/wiki/display/ANTLR4/Semantic+Predicates" title="Semantic Predicates - ANTLR 4 - ANTLR Project">Predicated</a></strong></li>
 <li>Written in <strong>modern Objective-C</strong> (using blocks, ARC, properties)</li>
-</ul><p>That's a mouthful, but what it means in practice is that PEGKit offers you a great deal of flexibility and expressive power when designing your grammars, but also produces parsers which exhibit good (linear) performance characteristics at runtime. Also, the Objective-C code produced by PEGKit is clean and readable, and easy to debug or tweak by hand.</p>
+</ul>
 
-<p>The design of PEGKit has been heavily influenced by <a href="http://antlr.org">ANTLR</a> by Terence Parr and a <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622">book by Stephen J Metsker</a>. Also, PEGKit depends on <a href="http://mattgemmell.com/2008/05/20/mgtemplateengine-templates-with-cocoa" title="MGTemplateEngine - Templates with Cocoa - Matt Gemmell">MGTemplateEngine</a> by Matt Gemmell for its templating features.</p>
+<p>That's a mouthful, but what it means in practice is that PEGKit offers you a great deal of flexibility and expressive power when designing your grammars, but also produces parsers which exhibit good (linear) performance characteristics at runtime. Also, the Objective-C code produced by PEGKit is clean and readable, and easy to debug or tweak by hand.</p>
+
+<p>The design of PEGKit has been heavily influenced by <a href="http://antlr.org">ANTLR</a> by Terence Parr and a <a href="http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622">book by Stephen J Metsker</a>. Also, PEGKit depends on <a href="https://github.com/itod/tdtemplateengine">TDTemplateEngine</a> for its templating features.</p>
 
 <p>In this tutorial, I'll demonstrate how to use PEGKit to implement a small <em>"MiniMath"</em> expression language in an iOS application. When we're done, we'll be able to parse <em>MiniMath</em> expressions and compute and display the numerical results.</p>
 
 <h3>
-<a name="designing-the-grammar" class="anchor" href="#designing-the-grammar"><span class="octicon octicon-link"></span></a>Designing the Grammar</h3>
+<a id="designing-the-grammar" class="anchor" href="#designing-the-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designing the Grammar</h3>
 
 <p>First, let's define for our <em>"MiniMath"</em> language. <em>MiniMath</em> should allow expressions like:</p>
 
@@ -137,7 +119,7 @@ atom = Number;
 </code></pre>
 
 <h3>
-<a name="adding-actions-to-the-grammar" class="anchor" href="#adding-actions-to-the-grammar"><span class="octicon octicon-link"></span></a>Adding Actions to the Grammar</h3>
+<a id="adding-actions-to-the-grammar" class="anchor" href="#adding-actions-to-the-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Actions to the Grammar</h3>
 
 <p>OK, so we designed a grammar for our <em>MiniMath</em> language that can be fed to PEGKit to produce Objective-C source code for our parser.</p>
 
@@ -146,7 +128,9 @@ atom = Number;
 <ol>
 <li>Specify a <strong>parser delegate</strong> object when creating your parser. Your parser delegate will receive callbacks as the parser matches input (like <code>-parser:didMatchAtom:</code>).</li>
 <li>Add <strong>grammar actions</strong> to your grammar. Grammar actions are small pieces of Objective-C source code embedded directly in a PEGKit grammar.</li>
-</ol><p>In this tutorial, we'll use the second option: grammar actions. We'll start by adding an action to the <code>atom</code> rule:</p>
+</ol>
+
+<p>In this tutorial, we'll use the second option: grammar actions. We'll start by adding an action to the <code>atom</code> rule:</p>
 
 <pre><code>atom = Number 
 {
@@ -211,12 +195,12 @@ atom = Number {
 </code></pre>
 
 <h3>
-<a name="interlude-checkout-the-example-project-with-pegkit-dependency" class="anchor" href="#interlude-checkout-the-example-project-with-pegkit-dependency"><span class="octicon octicon-link"></span></a>Interlude: Checkout the Example Project (with PEGKit Dependency)</h3>
+<a id="interlude-checkout-the-example-project-with-pegkit-dependency" class="anchor" href="#interlude-checkout-the-example-project-with-pegkit-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interlude: Checkout the Example Project (with PEGKit Dependency)</h3>
 
 <p>OK, time to <a href="https://github.com/itod/PEGKitMiniMathExample/zipball/master">checkout the PEGKit MiniMath Example</a> project. This project includes <a href="https://github.com/itod/pegkit">PEGKit</a> as submodule, and an iOS app target which embeds and links to PEGKit. If you are creating your own app which uses PEGKit, follow these <a href="http://stackoverflow.com/questions/9649537/how-to-embed-pegkit-as-a-private-framework-in-a-mac-app-bundle" title="objective c - How to embed PEGKit as a private framework in a Mac App bundle - Stack Overflow">instructions for embedding PEGKit in your app target</a>.</p>
 
 <h3>
-<a name="generating-parser-source-code" class="anchor" href="#generating-parser-source-code"><span class="octicon octicon-link"></span></a>Generating Parser Source Code</h3>
+<a id="generating-parser-source-code" class="anchor" href="#generating-parser-source-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating Parser Source Code</h3>
 
 <p>Now that our <em>MiniMath</em> grammar is complete, we can use PEGKit to generate Objective-C source code for our parser.</p>
 
@@ -233,7 +217,7 @@ atom = Number {
 <p><img src="http://parsekit.com/github/peg/files.png" alt="Produced Files"></p>
 
 <h3>
-<a name="run-the-minimath-example-ios-app" class="anchor" href="#run-the-minimath-example-ios-app"><span class="octicon octicon-link"></span></a>Run the MiniMath Example iOS App</h3>
+<a id="run-the-minimath-example-ios-app" class="anchor" href="#run-the-minimath-example-ios-app" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run the MiniMath Example iOS App</h3>
 
 <p>Back in Xcode, switch to the <strong>MiniMath</strong> target. This target is an example iOS app with an <strong>Input</strong> textfield, <strong>Calc</strong> button, and a <strong>Result</strong> textfield:</p>
 
@@ -294,21 +278,23 @@ NSLog(@"The numerical result is: %@", n);
 </code></pre>
 
 <h3>
-<a name="conclusion" class="anchor" href="#conclusion"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+<a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
 
 <p>I hope this simple tutorial will inspire you use PEGKit to parse more interesting langauges than <em>MiniMath</em> in your Mac and iOS applications.</p>
 
 <p>To learn more about PEGKit grammar syntax, checkout some of the <a href="https://github.com/itod/pegkit/blob/master/res/expression.grammar">many</a> <a href="https://github.com/itod/pegkit/blob/master/res/expressionActions.grammar">example</a> <a href="https://github.com/itod/pegkit/blob/master/res/nspredicate2.grammar">grammars</a> in the PEGKit project.</p>
 
 <p>The <a href="http://github.com/itod/pegkit/">main PEGKit repository is here</a>. I'm <a href="https://twitter.com/iTod" title="Todd Ditchendorf (iTod) on Twitter">@iTod</a> on Twitter, and if you find some use for PEGKit, consider checking out <a href="http://celestialteapot.com">some of my other software</a>. Cheers!</p>
-      </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/itod">itod</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/itod/PEGKitMiniMathTutorial">Build language parsers for iOS with PEGKit</a> is maintained by <a href="https://github.com/itod">itod</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-              <script type="text/javascript">
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
