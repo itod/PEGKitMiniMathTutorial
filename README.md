@@ -17,7 +17,7 @@ Specifically, parsers produced by PEGKit are:
 
 That's a mouthful, but what it means in practice is that PEGKit offers you a great deal of flexibility and expressive power when designing your grammars, but also produces parsers which exhibit good (linear) performance characteristics at runtime. Also, the Objective-C code produced by PEGKit is clean and readable, and easy to debug or tweak by hand.
 
-The design of PEGKit has been heavily influenced by [ANTLR](http://antlr.org) by Terence Parr and a [book by Stephen J Metsker](http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622). Also, PEGKit depends on [MGTemplateEngine](http://mattgemmell.com/2008/05/20/mgtemplateengine-templates-with-cocoa "MGTemplateEngine - Templates with Cocoa - Matt Gemmell") by Matt Gemmell for its templating features.
+The design of PEGKit has been heavily influenced by [ANTLR](http://antlr.org) by Terence Parr and a [book by Stephen J Metsker](http://www.amazon.com/Building-Parsers-Java-Steven-Metsker/dp/0201719622). Also, PEGKit depends on [TDTemplateEngine](https://github.com/itod/tdtemplateengine) for its templating features.
 
 In this tutorial, I'll demonstrate how to use PEGKit to implement a small *"MiniMath"* expression language in an iOS application. When we're done, we'll be able to parse *MiniMath* expressions and compute and display the numerical results.
 
