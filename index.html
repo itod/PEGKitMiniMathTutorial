@@ -47,7 +47,7 @@ Parsing Expression Grammars">Packrat</a></strong> (or <em>memoizing</em>), </li>
 <p>In this tutorial, I'll demonstrate how to use PEGKit to implement a small <em>"MiniMath"</em> expression language in an iOS application. When we're done, we'll be able to parse <em>MiniMath</em> expressions and compute and display the numerical results.</p>
 
 <h3>
-<a id="designing-the-grammar" class="anchor" href="#designing-the-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designing the Grammar</h3>
+<a id="designing-the-grammar" class="anchor" href="#designing-the-grammar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designing the Grammar</h3>
 
 <p>First, let's define for our <em>"MiniMath"</em> language. <em>MiniMath</em> should allow expressions like:</p>
 
@@ -119,7 +119,7 @@ atom = Number;
 </code></pre>
 
 <h3>
-<a id="adding-actions-to-the-grammar" class="anchor" href="#adding-actions-to-the-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding Actions to the Grammar</h3>
+<a id="adding-actions-to-the-grammar" class="anchor" href="#adding-actions-to-the-grammar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding Actions to the Grammar</h3>
 
 <p>OK, so we designed a grammar for our <em>MiniMath</em> language that can be fed to PEGKit to produce Objective-C source code for our parser.</p>
 
@@ -195,12 +195,12 @@ atom = Number {
 </code></pre>
 
 <h3>
-<a id="interlude-checkout-the-example-project-with-pegkit-dependency" class="anchor" href="#interlude-checkout-the-example-project-with-pegkit-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interlude: Checkout the Example Project (with PEGKit Dependency)</h3>
+<a id="interlude-checkout-the-example-project-with-pegkit-dependency" class="anchor" href="#interlude-checkout-the-example-project-with-pegkit-dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Interlude: Checkout the Example Project (with PEGKit Dependency)</h3>
 
 <p>OK, time to <a href="https://github.com/itod/PEGKitMiniMathExample/zipball/master">checkout the PEGKit MiniMath Example</a> project. This project includes <a href="https://github.com/itod/pegkit">PEGKit</a> as submodule, and an iOS app target which embeds and links to PEGKit. If you are creating your own app which uses PEGKit, follow these <a href="http://stackoverflow.com/questions/9649537/how-to-embed-pegkit-as-a-private-framework-in-a-mac-app-bundle" title="objective c - How to embed PEGKit as a private framework in a Mac App bundle - Stack Overflow">instructions for embedding PEGKit in your app target</a>.</p>
 
 <h3>
-<a id="generating-parser-source-code" class="anchor" href="#generating-parser-source-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Generating Parser Source Code</h3>
+<a id="generating-parser-source-code" class="anchor" href="#generating-parser-source-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Generating Parser Source Code</h3>
 
 <p>Now that our <em>MiniMath</em> grammar is complete, we can use PEGKit to generate Objective-C source code for our parser.</p>
 
@@ -210,18 +210,18 @@ atom = Number {
 
 <p>Paste the <em>MiniMath</em> grammar into the large text area at the bottom of the ParserGenApp window, and select the options shown below.</p>
 
-<p><img src="http://parsekit.com/github/peg/parsergen3.png" alt="ParserGenApp"></p>
+<p><img src="http://celestialteapot.com/i/peg/parsergen3.png" alt="ParserGenApp"></p>
 
 <p>Click the <strong>Generate</strong> button and notice that <a href="https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.h">MiniMathParser.h</a> and <a href="https://github.com/itod/PEGKitMiniMathExample/blob/master/MiniMath/MiniMathParser.m">MiniMathParser.m</a> files have been created, and appear on your Desktop. Normally, you'd need to drag these source code files into your app's Xcode project, but in the case of <em>MiniMath</em>, I've included the files already (cooking show style!).</p>
 
-<p><img src="http://parsekit.com/github/peg/files.png" alt="Produced Files"></p>
+<p><img src="http://celestialteapot.com/i/peg/files.png" alt="Produced Files"></p>
 
 <h3>
-<a id="run-the-minimath-example-ios-app" class="anchor" href="#run-the-minimath-example-ios-app" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run the MiniMath Example iOS App</h3>
+<a id="run-the-minimath-example-ios-app" class="anchor" href="#run-the-minimath-example-ios-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Run the MiniMath Example iOS App</h3>
 
 <p>Back in Xcode, switch to the <strong>MiniMath</strong> target. This target is an example iOS app with an <strong>Input</strong> textfield, <strong>Calc</strong> button, and a <strong>Result</strong> textfield:</p>
 
-<p><img src="http://parsekit.com/github/peg/app_empty.png" alt="MiniMathApp"></p>
+<p><img src="http://celestialteapot.com/i/peg/app_empty.png" alt="MiniMathApp"></p>
 
 <p>Here's the implementation of the <code>-calc:</code> Action attached to the <strong>Calc</strong> button, showing how to use the <code>MiniMathParser</code> we just created:</p>
 
@@ -246,7 +246,7 @@ atom = Number {
 
 <p>Run the app (make sure you've selected the <strong>iPhone Simulator</strong> as your run destination), and you'll see the input field is pre-populated with an example expression. Click the <strong>Calc</strong> button to compute and display the result:</p>
 
-<p><img src="http://parsekit.com/github/peg/app.png" alt="MiniMathApp"></p>
+<p><img src="http://celestialteapot.com/i/peg/app.png" alt="MiniMathApp"></p>
 
 <p>This displayed result deserves a bit of explanation. </p>
 
@@ -278,7 +278,7 @@ NSLog(@"The numerical result is: %@", n);
 </code></pre>
 
 <h3>
-<a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+<a id="conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Conclusion</h3>
 
 <p>I hope this simple tutorial will inspire you use PEGKit to parse more interesting langauges than <em>MiniMath</em> in your Mac and iOS applications.</p>
 
