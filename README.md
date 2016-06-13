@@ -229,7 +229,7 @@ For our given input of `(2+2)*3`:
 
 ### Conclusion
 
-I hope this simple tutorial will inspire you use PEGKit to parse more interesting langauges than *MiniMath* in your Mac and iOS applications.
+I hope this simple tutorial will inspire you use PEGKit to parse more interesting languages than *MiniMath* in your Mac and iOS applications.
 
 To learn more about PEGKit grammar syntax, checkout some of the [many](https://github.com/itod/pegkit/blob/master/res/expression.grammar) [example](https://github.com/itod/pegkit/blob/master/res/expressionActions.grammar) [grammars](https://github.com/itod/pegkit/blob/master/res/nspredicate2.grammar) in the PEGKit project.
 
